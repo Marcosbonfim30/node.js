@@ -1,0 +1,39 @@
+<!-- public/success.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>Agendamento realizado</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Estilos rápidos: ajuste à vontade ou mova para style.css -->
+  <style>
+    *{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif;}
+    body{margin:0;display:flex;justify-content:center;align-items:center;
+         min-height:100vh;background:#f5f7fa;color:#333;}
+    .card{background:#fff;padding:40px 30px;border-radius:8px;
+          box-shadow:0 4px 10px rgba(0,0,0,.12);text-align:center;}
+    h1{color:#2e7d32;margin-top:0;font-size:2rem;}
+    p{margin:20px 0 30px;font-size:1.1rem;}
+    .btn{display:inline-block;padding:12px 28px;border:none;border-radius:4px;
+        background:#1976d2;color:#fff;font-size:1rem;cursor:pointer;
+        text-decoration:none;transition:.2s;}
+    .btn:hover{background:#145da0;}
+    .icon{font-size:70px;color:#2e7d32;}
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <!-- Ícone ✅ em emoji; troque por SVG ou ícone de biblioteca se preferir -->
+    <div class="icon">✅</div>
+    <h1>Paciente agendado com sucesso!</h1>
+    <p>O procedimento foi registrado no sistema.<br>
+       Você receberá um e-mail de confirmação em instantes.</p>
+
+    <!-- Voltar ao início (login) ou ir para a lista de agendamentos -->
+    <a href="/agenda.html" class="btn">Novo agendamento</a>
+    <a href="/index.html" class="btn" style="background:#6c757d;margin-left:10px;">Sair</a>
+  </div>
+
+</body>
+</html>
