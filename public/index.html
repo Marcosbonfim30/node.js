@@ -1,18 +1,103 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Login – Clínica</title>
+  <meta charset="UTF-8" />
+  <title>Login – MD Pescaria</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #6ec1ff, #e3f7ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .login-card {
+      background: #fff;
+      width: 320px;
+      padding: 24px 32px 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .login-card img {
+      width: 96px;
+      height: 96px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 18px;
+      border: 2px solid #6ec1ff;
+    }
+    h2 {
+      margin-bottom: 24px;
+      color: #034078;
+      font-size: 1.7rem;
+    }
+    label {
+      display: block;
+      text-align: left;
+      margin-bottom: 6px;
+      color: #333;
+      font-size: 0.9rem;
+    }
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 18px;
+      border: 1px solid #bcd7e8;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+    button {
+      width: 100%;
+      padding: 12px 0;
+      background: #0284c7;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.25s;
+    }
+    button:hover {
+      background: #0369a1;
+    }
+    .register {
+      margin-top: 18px;
+      font-size: 0.9rem;
+    }
+    .register a {
+      color: #0284c7;
+      text-decoration: none;
+    }
+    .register a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-  <h2>Login</h2>
-  <form method="POST" action="/login">
-    <label>RG:</label>
-    <input type="text" name="rg" required><br><br>
-    <label>Senha:</label>
-    <input type="password" name="senha" required><br><br>
-    <button type="submit">Entrar</button>
-  </form>
-  <p>Não tem conta? <a href="/register">Criar agora</a></p>
+  <div class="login-card">
+    <img src="/img/logo.png" alt="Logo MD Pescaria" />
+    <h2>MD Pescaria – Login</h2>
+
+    <form method="POST" action="/login">
+      <label for="email">Email</label>
+      <input type="text" id="email" name="email" placeholder="Seu email" required />
+      <label for="senha">Senha</label>
+      <input type="password" id="senha" name="senha" placeholder="Sua senha" required />
+
+      <button type="submit">Entrar</button>
+    </form>
+
+    <p class="register">
+      Não tem conta?
+      <a href="/register">Criar conta</a>
+    </p>
+  </div>
 </body>
 </html>

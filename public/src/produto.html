@@ -1,0 +1,311 @@
+<!-- public/produto.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MD Pescaria | Produtos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f7fa;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    .card h2 {
+      margin-top: 0;
+    }
+    .card ul {
+      padding-left: 20px;
+      margin: 10px 0;
+    }
+    .card img {
+      width: 100%;
+      height: auto;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+    .price {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #0b8f3c;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 16px;
+      background: #0b8f3c;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+    .btn:hover {
+      background: #08692c;
+    }
+  </style>
+</head>
+<body>
+  <h1>Catálogo de Produtos – MD Pescaria 🎣</h1>
+  <div class="grid">
+    <div class="card">
+      <h2>Carretilha Shimano</h2>
+      <img src="/img/carretilha-shimano.jpg" alt="Carretilha Shimano" />
+      <ul>
+        <li>Relação de recolhimento: 8.5:1</li>
+        <li>11 + 1 rolamentos de esferas inox</li>
+        <li>Drag máximo: 8&nbsp;kg</li>
+        <li>Peso: 190&nbsp;g</li>
+        <li>Chassi em alumínio HGN super leve</li>
+      </ul>
+      <p class="price">Preço: R$ 899,90</p>
+      <a class="btn" href="confirmar.html?prod=1">Comprar</a>
+    </div>
+
+    <div class="card">
+      <h2>Peixinho Artificial</h2>
+      <img src="/img/peixinho-artificial.jpg" alt="Peixinho Artificial" />
+      <ul>
+        <li>Tamanho: 7&nbsp;cm | Peso: 10&nbsp;g</li>
+        <li>Vantagens: ação realista, flutuação balanceada</li>
+        <li>Tipo: Meia água</li>
+        <li>Peixes-alvo: Tucunaré, Traíra, Robalo</li>
+        <li>Garateias reforçadas 4X</li>
+      </ul>
+      <p class="price">Preço: R$ 24,90</p>
+      <a class="btn" href="confirmar.html?prod=2">Comprar</a>
+    </div>
+
+    <div class="card">
+      <h2>Molinete Marine</h2>
+      <img src="/img/molinete-marine.jpg" alt="Molinete Marine" />
+      <ul>
+        <li>Tamanho: 4000</li>
+        <li>Capacidade de linha: 0,30&nbsp;mm / 200&nbsp;m</li>
+        <li>5 + 1 rolamentos inoxidáveis</li>
+        <li>Drag máximo: 12&nbsp;kg</li>
+        <li>Peso: 285&nbsp;g</li>
+        <li>Carretel em alumínio usinado</li>
+      </ul>
+      <p class="price">Preço: R$ 529,90</p>
+      <a class="btn" href="confirmar.html?prod=3">Comprar</a>
+    </div>
+
+    <div class="card">
+      <h2>Varinha Shimano p/ Carretilha</h2>
+      <img src="/img/varinha-shimano.jpg"
+           alt="Varinha Shimano para Carretilha" />
+      <ul>
+        <li>Blank em grafite IM8 (fibra de carbono)</li>
+        <li>Comprimento: 6'6" (1,98&nbsp;m)</li>
+        <li>Potência: Média</li>
+        <li>Lure: 7 – 21&nbsp;g | Line: 8 – 17&nbsp;lb</li>
+        <li>Resistência máxima: 10&nbsp;kg</li>
+        <li>Passadores Fuji Alconite</li>
+      </ul>
+      <p class="price">Preço: R$ 329,90</p>
+      <a class="btn" href="confirmar.html?prod=4">Comprar</a>
+    </div>
+
+    <div class="card">
+      <h2>Varinha Marine</h2>
+      <img src="/img/varinha-marine.jpg" alt="Varinha Marine" />
+      <ul>
+        <li>Blank em fibra de vidro tubular</li>
+        <li>Comprimento: 6'0" (1,80&nbsp;m)</li>
+        <li>Potência: Média Pesada</li>
+        <li>Lure: 10 – 40&nbsp;g | Line: 12 – 25&nbsp;lb</li>
+        <li>Resistência máxima: 12&nbsp;kg</li>
+        <li>Cabo em EVA high density</li>
+      </ul>
+      <p class="price">Preço: R$ 199,90</p>
+      <a class="btn" href="confirmar.html?prod=5">Comprar</a>
+    </div>
+  </div>
+</body>
+</html>
+```
+
+```html
+<!-- public/confirmar.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Confirmar Compra | MD Pescaria</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f7fa;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .payment-section {
+      display: none;
+      margin-top: 10px;
+      padding: 10px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .qr {
+      width: 180px;
+      height: 180px;
+      margin: 10px 0;
+    }
+    .btn-submit {
+      background: #0b8f3c;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+    }
+    .btn-submit:hover {
+      background: #08692c;
+    }
+    .boleto-code {
+      font-family: monospace;
+      word-wrap: break-word;
+      font-size: 0.9rem;
+      background: #fff;
+      padding: 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Confirmar Compra</h1>
+  <form action="finalizar.html" method="get">
+    <input type="hidden" name="prod" id="prod-input" />
+    <label>Nome Completo</label>
+    <input name="nome" required />
+
+    <label>Endereço</label>
+    <input name="endereco" placeholder="Rua, número, bairro" required />
+
+    <label>Cidade</label>
+    <input name="cidade" required />
+
+    <label>Estado</label>
+    <input name="estado" required />
+
+    <label>CEP</label>
+    <input name="cep" required pattern="\\d{5}-?\\d{3}" />
+
+    <label>Forma de Pagamento</label>
+    <select name="pagamento" id="pagamento" required>
+      <option value="" disabled selected>Selecione</option>
+      <option value="pix">PIX</option>
+      <option value="cartao">Cartão de Crédito</option>
+      <option value="boleto">Boleto</option>
+    </select>
+
+    <!-- PIX -->
+    <div class="payment-section" id="pix-section">
+      <p>Escaneie o QR Code abaixo para pagar:</p>
+      <img src="/img/pix-qrcode.png" alt="QR Code PIX" class="qr" />
+      <p>Ou copie e cole a chave PIX:</p>
+      <input readonly value="pix@mdpescaria.com.br" />
+    </div>
+
+    <!-- Cartão -->
+    <div class="payment-section" id="cartao-section">
+      <label>Número do Cartão</label>
+      <input name="cartao_numero" pattern="\\d{16}" placeholder="XXXXXXXXXXXXXXXX"
+             maxlength="16" />
+
+      <label>Nome impresso no Cartão</label>
+      <input name="cartao_nome" />
+
+      <label>Validade (MM/AA)</label>
+      <input name="cartao_validade" pattern="\\d{2}/\\d{2}"
+             placeholder="MM/AA" maxlength="5" />
+
+      <label>CVV</label>
+      <input name="cartao_cvv" pattern="\\d{3}" maxlength="3" />
+    </div>
+
+    <!-- Boleto -->
+    <div class="payment-section" id="boleto-section">
+      <p>Código de barras para pagamento:</p>
+      <div class="boleto-code" id="boleto-code"></div>
+    </div>
+
+    <button class="btn-submit" type="submit">Finalizar Compra</button>
+  </form>
+
+  <script>
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    function toggleSections() {
+      const pay = $('pagamento').value;
+      ['pix', 'cartao', 'boleto'].forEach((p) => {
+        const section = $(p + '-section');
+        if (section) section.style.display = pay === p ? 'block' : 'none';
+      });
+      if (pay === 'boleto') generateBoleto();
+    }
+
+    function generateBoleto() {
+      const rand = () => Math.floor(Math.random() * 9).toString();
+      let code = '';
+      for (let i = 0; i < 47; i += 1) code += rand();
+      $('boleto-code').textContent = code;
+    }
+
+    // Set product id from query string
+    const params = new URLSearchParams(location.search);
+    const prod = params.get('prod');
+    if (prod) $('prod-input').value = prod;
+
+    $('pagamento').addEventListener('change', toggleSections);
+  </script>
+</body>
+</html>

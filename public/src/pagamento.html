@@ -1,0 +1,232 @@
+
+<!-- public/pagamento.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pagamento | MD Pescaria</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f7fa;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .product-summary,
+    form {
+      max-width: 700px;
+      margin: 0 auto 30px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    .product-summary {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .product-summary img {
+      width: 160px;
+      height: auto;
+      border-radius: 6px;
+    }
+    .product-summary h2 {
+      margin: 0 0 10px;
+    }
+    .product-summary .price {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #0b8f3c;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+    input,
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .payment-section {
+      display: none;
+      margin-top: 10px;
+      padding: 10px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .qr {
+      width: 180px;
+      height: 180px;
+      margin: 10px 0;
+    }
+    .btn-submit {
+      background: #0b8f3c;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+    }
+    .btn-submit:hover {
+      background: #08692c;
+    }
+    .boleto-code {
+      font-family: monospace;
+      word-wrap: break-word;
+      font-size: 0.9rem;
+      background: #fff;
+      padding: 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Detalhes do Pedido</h1>
+
+  <div class="product-summary" id="product-summary">
+    <!-- Preenchido via JS -->
+  </div>
+
+  <form action="finalizar.html" method="get">
+    <input type="hidden" name="prod" id="prod-input" />
+    <label>Nome Completo</label>
+    <input name="nome" required />
+
+    <label>Endereço</label>
+    <input name="endereco" placeholder="Rua, número, bairro" required />
+
+    <label>Cidade</label>
+    <input name="cidade" required />
+
+    <label>Estado</label>
+    <input name="estado" required />
+
+    <label>CEP</label>
+    <input name="cep" required pattern="\\d{5}-?\\d{3}" />
+
+    <label>Forma de Pagamento</label>
+    <select name="pagamento" id="pagamento" required>
+      <option value="" disabled selected>Selecione</option>
+      <option value="pix">PIX</option>
+      <option value="cartao">Cartão de Crédito</option>
+      <option value="boleto">Boleto</option>
+    </select>
+
+    <!-- PIX -->
+    <div class="payment-section" id="pix-section">
+      <p>Escaneie o QR Code abaixo para pagar:</p>
+      <img src="/img/pix-qrcode.png" alt="QR Code PIX" class="qr" />
+      <p>Ou copie e cole a chave PIX:</p>
+      <input readonly value="pix@mdpescaria.com.br" />
+    </div>
+
+    <!-- Cartão -->
+    <div class="payment-section" id="cartao-section">
+      <label>Número do Cartão</label>
+      <input name="cartao_numero" pattern="\\d{16}"
+             placeholder="XXXXXXXXXXXXXXXX" maxlength="16" />
+
+      <label>Nome impresso no Cartão</label>
+      <input name="cartao_nome" />
+
+      <label>Validade (MM/AA)</label>
+      <input name="cartao_validade" pattern="\\d{2}/\\d{2}"
+             placeholder="MM/AA" maxlength="5" />
+
+      <label>CVV</label>
+      <input name="cartao_cvv" pattern="\\d{3}" maxlength="3" />
+    </div>
+
+    <!-- Boleto -->
+    <div class="payment-section" id="boleto-section">
+      <p>Código de barras para pagamento:</p>
+      <div class="boleto-code" id="boleto-code"></div>
+    </div>
+
+    <button class="btn-submit" type="submit">Finalizar Compra</button>
+  </form>
+
+  <script>
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    const produtos = {
+      1: {
+        nome: 'Carretilha Shimano',
+        img: '/img/carretilha-shimano.jpg',
+        preco: 'R$ 899,90'
+      },
+      2: {
+        nome: 'Peixinho Artificial',
+        img: '/img/peixinho-artificial.jpg',
+        preco: 'R$ 24,90'
+      },
+      3: {
+        nome: 'Molinete Marine',
+        img: '/img/molinete-marine.jpg',
+        preco: 'R$ 529,90'
+      },
+      4: {
+        nome: 'Varinha Shimano p/ Carretilha',
+        img: '/img/varinha-shimano.jpg',
+        preco: 'R$ 329,90'
+      },
+      5: {
+        nome: 'Varinha Marine',
+        img: '/img/varinha-marine.jpg',
+        preco: 'R$ 199,90'
+      }
+    };
+
+    function renderProduct(prodId) {
+      const prod = produtos[prodId] || produtos[1];
+      const container = $('product-summary');
+      container.innerHTML = `
+        <img src="${prod.img}" alt="${prod.nome}" />
+        <div>
+          <h2>${prod.nome}</h2>
+          <p class="price">Preço: ${prod.preco}</p>
+        </div>
+      `;
+    }
+
+    function toggleSections() {
+      const pay = $('pagamento').value;
+      ['pix', 'cartao', 'boleto'].forEach((p) => {
+        const section = $(p + '-section');
+        if (section) section.style.display = pay === p ? 'block' : 'none';
+      });
+      if (pay === 'boleto') generateBoleto();
+    }
+
+    function generateBoleto() {
+      const rand = () => Math.floor(Math.random() * 9).toString();
+      let code = '';
+      for (let i = 0; i < 47; i += 1) code += rand();
+      $('boleto-code').textContent = code;
+    }
+
+    const params = new URLSearchParams(location.search);
+    const prodId = params.get('prod') || '1';
+    $('prod-input').value = prodId;
+    renderProduct(prodId);
+
+    $('pagamento').addEventListener('change', toggleSections);
+  </script>
+</body>
+</html>

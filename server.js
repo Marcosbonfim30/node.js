@@ -1,121 +1,178 @@
-/* server.js */
-const express = require('express');
-const path = require('path');
-const mysql = require('mysql2/promise');
-const bcrypt = require('bcrypt');
-const session = require('express-session');
-const bodyParser = require('body-parser');
 
+// src/server.js
+import express from 'express';
+import bodyParser from 'body-parser';
+import session from 'express-session';
+import bcrypt from 'bcrypt';
+import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+// ---------------------------------
+// CONFIGURAÇÃO
+// ---------------------------------
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-/* ---------- Configurações ---------- */
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(session({
-  secret: 'clinica_super_segura',
-  resave: false,
-  saveUninitialized: true
-}));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 
-/* ---------- Conexão MySQL ---------- */
+app.use(
+  session({
+    secret: 'mdpescaria-secret-key',
+    resave: false,
+    saveUninitialized: true
+  })
+);
+
+// ---------------------------------
+// CONEXÃO COM MYSQL (POOL)
+// ---------------------------------
 const pool = mysql.createPool({
-  host:     'localhost',
-  user:     'root',
-  password: '1234',
-  database: 'clinica_demo',
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASS || '1234',
+  database: process.env.DB_NAME || 'md_pescaria',
   waitForConnections: true,
-  connectionLimit: 10
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-/* ---------- Rotas ---------- */
+// ---------------------------------
+// MIDDLEWARE DE AUTENTICAÇÃO
+// ---------------------------------
+function auth(req, res, next) {
+  if (req.session.user) return next();
+  res.redirect('/produto');
+}
 
-/* Tela inicial = login */
+// ---------------------------------
+// ROTAS
+// ---------------------------------
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/index.html'));
+  res.send(
+    `<h2>Bem-vindo à MD Pescaria 🎣</h2>
+     <a href="/index">index</a> |
+     <a href="/register">Registrar-se</a>`
+  );
 });
 
-/* Registro: tela */
-app.get('/register', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/register.html'));
+// -------------- LOGIN --------------
+app.get('/index', (req, res) => {
+  res.sendFile(`${process.cwd()}/public/index.html`);
 });
 
-/* Login */
-app.post('/login', async (req, res) => {
+app.post('/index', async (req, res) => {
+  const { email, senha } = req.body;
+
   try {
-    const { rg, senha } = req.body;
     const [rows] = await pool.execute(
-      'SELECT * FROM usuario WHERE rg = ?', [rg]
+      'SELECT * FROM clientes WHERE email = ?',
+      [email]
     );
-    if (rows.length === 0) return res.redirect('/?err=1');
+
+    if (rows.length === 0) return res.send('Usuário não encontrado!');
 
     const user = rows[0];
-    const match = await bcrypt.compare(senha, user.senha_hash);
-    if (!match) return res.redirect('/?err=1');
+    const senhaOK = await bcrypt.compare(senha, user.senha);
 
-    req.session.userId = user.id_usuario;
-    req.session.userName = user.nome;
-    return res.redirect('/agenda');
-  } catch (e) {
-    console.error(e);
-    res.status(500).send('Erro no servidor');
+    if (!senhaOK) return res.send('Senha incorreta!');
+
+    req.session.user = user;
+    res.redirect('/produtos');
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
   }
 });
 
-/* Registro: gravação */
+// ------------- REGISTRO -------------
+app.get('/register', (req, res) => {
+  res.sendFile(`${process.cwd()}/public/register.html`);
+});
+
 app.post('/register', async (req, res) => {
+  const { nome, email, senha } = req.body;
+
   try {
-    const { nome, rg, senha } = req.body;
     const hash = await bcrypt.hash(senha, 10);
+
     await pool.execute(
-      'INSERT INTO usuario (nome, rg, senha_hash) VALUES (?,?,?)',
-      [nome, rg, hash]
+      'INSERT INTO clientes (nome, email, senha) VALUES (?, ?, ?)',
+      [nome, email, hash]
     );
-    return res.redirect('/');
-  } catch (e) {
-    console.error(e);
-    res.status(500).send('Erro ao registrar');
+
+    res.redirect('/index');
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
   }
 });
 
-/* Agenda: tela protegida */
-app.get('/agenda', async (req, res) => {
-  if (!req.session.userId) return res.redirect('/');
-  const [procs]  = await pool.execute('SELECT * FROM procedimentos');
-  const [planos] = await pool.execute('SELECT * FROM planos_saude');
-  /* Renderiza HTML simples injetando opções */
-  let optionsProc  = procs .map(p => `<option value="${p.id_proc}">${p.nome}</option>`).join('');
-  let optionsPlano = planos.map(p => `<option value="${p.id_plano}">${p.nome}</option>`).join('');
+// ---------- LISTA DE PRODUTOS ----------
+app.get('/produtos', auth, async (req, res) => {
+  try {
+    const [produtos] = await pool.execute('SELECT * FROM produtos');
 
-  res.send(`
-    <h2>Olá, ${req.session.userName}</h2>
-    <form method="POST" action="/agenda">
-      <label>Procedimento:</label>
-      <select name="proc_id">${optionsProc}</select><br><br>
-      <label>Plano de saúde:</label>
-      <select name="plano_id">${optionsPlano}</select><br><br>
-      <button type="submit">Confirmar</button>
-    </form>
-  `);
+    let html = `<h2>Produtos – MD Pescaria 🎣</h2>
+                <a href="/logout">Logout</a><hr/>`;
+
+    produtos.forEach((p) => {
+      html += `
+        <div>
+          <h3>${p.nome}</h3>
+          <p>${p.descricao || ''}</p>
+          <p>Preço: R$ ${p.preco.toFixed(2)}</p>
+          <a href="/comprar/${p.id}">Comprar</a>
+        </div>
+        <hr/>`;
+    });
+
+    res.send(html);
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
 });
 
-/* Agenda: gravação */
-app.post('/agenda', async (req, res) => {
-  if (!req.session.userId) return res.redirect('/');
-  const { proc_id, plano_id } = req.body;
-  await pool.execute(
-    'INSERT INTO agendamentos (usuario_id, proc_id, plano_id) VALUES (?,?,?)',
-    [req.session.userId, proc_id, plano_id]
-  );
-  res.redirect('/success');
+// ----------- COMPRAR PRODUTO -----------
+app.get('/comprar/:id', auth, async (req, res) => {
+  const id_produto = req.params.id;
+  const id_cliente = req.session.user.id;
+
+  try {
+    const [[produto]] = await pool.execute(
+      'SELECT preco FROM produtos WHERE id = ?',
+      [id_produto]
+    );
+
+    if (!produto) return res.send('Produto não encontrado!');
+
+    await pool.execute(
+      `INSERT INTO pedidos (id_cliente, id_produto, quantidade, total)
+       VALUES (?, ?, 1, ?)`,
+      [id_cliente, id_produto, produto.preco]
+    );
+
+    res.send(
+      `<h2>Pedido realizado com sucesso 🎣</h2>
+       <a href="/produtos">Voltar aos produtos</a>`
+    );
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
 });
 
-/* Sucesso */
-app.get('/success', (req, res) => {
-  if (!req.session.userId) return res.redirect('/');
-  res.sendFile(path.join(__dirname, 'public/success.html'));
+// --------------- LOGOUT ---------------
+app.get('/logout', (req, res) => {
+  req.session.destroy(() => res.redirect('/'));
 });
 
-/* ---------- Inicia servidor ---------- */
-app.listen(PORT, () => console.log(`Servidor rodando em http://localhost:${PORT}`));
+// -------------- INICIAR --------------
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor rodando em http://localhost:3000`);
+});
+
